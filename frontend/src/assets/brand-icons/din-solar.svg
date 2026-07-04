@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Solar Panel">
+  <title>Solar Panel</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <polygon points="6,14 58,14 54,52 10,52"/>
+  <line x1="24" y1="14" x2="20" y2="52" stroke="#F5EEE0" stroke-width="2"/>
+  <line x1="40" y1="14" x2="44" y2="52" stroke="#F5EEE0" stroke-width="2"/>
+  <line x1="8" y1="28" x2="56" y2="28" stroke="#F5EEE0" stroke-width="2"/>
+  <line x1="8" y1="40" x2="56" y2="40" stroke="#F5EEE0" stroke-width="2"/>
+  <rect x="30" y="52" width="4" height="8"/>
+</g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Submarine">
+  <title>Submarine</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <path d="M 6 36 Q 6 26 20 26 L 50 26 Q 60 26 60 36 Q 60 46 50 46 L 20 46 Q 6 46 6 36 Z"/>
+  <rect x="26" y="16" width="10" height="12"/>
+  <rect x="30" y="8" width="3" height="10"/>
+  <rect x="35" y="10" width="3" height="8"/>
+  <circle fill="#F5EEE0" cx="18" cy="36" r="3"/>
+  <circle fill="#F5EEE0" cx="32" cy="36" r="3"/>
+  <circle fill="#F5EEE0" cx="46" cy="36" r="3"/>
+</g>
+</svg>

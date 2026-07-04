@@ -1,0 +1,41 @@
+# Files NOT uploaded to Cloud Build as build source. Keep this lean so
+# `gcloud builds submit` is fast. The Docker build itself still honors
+# .dockerignore; this only trims the source tarball sent to Cloud Build.
+#
+# Do NOT add README.md or the app/alembic/frontend source — the Dockerfile
+# copies those. Secrets are excluded belt-and-suspenders (cf. CLAUDE.md Rule 10).
+
+.git/
+.gcloudignore
+
+# Build + cache artifacts (rebuilt in-container)
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+**/__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+htmlcov/
+.coverage
+
+# Not needed to build the runtime image
+tests/
+docs/
+scripts/
+evals/
+
+# Secrets + local config — never upload
+.env
+.env.*
+!.env.example
+.gcp-secrets/
+
+# Editor / tooling
+.vscode/
+.idea/
+.claude/
+.DS_Store

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Lynda PWA app icon (full-bleed) — source for pwa-maskable-512.png and the
+  Apple touch icon. Full-bleed cream field (no rounded corners / no transparency)
+  so Android maskable cropping and iOS auto-rounding both look right. Letters
+  sit inside the inner ~80% "safe zone" so nothing important gets cropped.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#F5EEE0"/>
+  <text
+    x="256" y="300"
+    font-family="Impact, 'Arial Black', 'Helvetica Neue', sans-serif"
+    font-weight="900"
+    font-size="140"
+    text-anchor="middle"
+    fill="#C8202F"
+    letter-spacing="-5"
+  >DIN</text>
+</svg>

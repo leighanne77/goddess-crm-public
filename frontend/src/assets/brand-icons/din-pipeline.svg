@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Pipeline">
+  <title>Pipeline</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <rect x="2" y="22" width="60" height="20"/>
+  <rect fill="#F5EEE0" x="12" y="22" width="4" height="20"/>
+  <rect fill="#F5EEE0" x="30" y="22" width="4" height="20"/>
+  <rect fill="#F5EEE0" x="48" y="22" width="4" height="20"/>
+  <rect x="0" y="18" width="4" height="28"/>
+  <rect x="60" y="18" width="4" height="28"/>
+</g>
+</svg>

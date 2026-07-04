@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Ingot Stack">
+  <title>Ingot Stack</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <polygon points="10,22 54,22 50,32 14,32"/>
+  <polygon points="6,32 58,32 54,42 10,42"/>
+  <polygon points="2,42 62,42 58,52 6,52"/>
+</g>
+</svg>

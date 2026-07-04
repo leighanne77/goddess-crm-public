@@ -1,0 +1,43 @@
+# Build the Lynda backend image on Google Cloud Build.
+#
+# Why: Cloud Build runs on native amd64 machines, so building here avoids the
+# slow QEMU emulation you hit cross-building amd64 from an Apple Silicon (arm64)
+# Mac — and it doesn't tie up your laptop. Cloud Run runs amd64, so a
+# single-arch amd64 image is all production needs (local Mac dev still uses
+# `make docker-local`, which builds arm64 natively).
+#
+# Usage:
+#   make cloud-push                 # build + push to Artifact Registry (tag = git short sha)
+#   make cloud-deploy               # build + push, then roll out to Cloud Run
+#   make cloud-push TAG=hotfix-1    # override the tag
+#
+# The Docker build inside this step still honors .dockerignore; .gcloudignore
+# controls what source gets uploaded to Cloud Build.
+
+substitutions:
+  _TAG: latest
+  _REPO: lynda-crm
+  _IMAGE: backend
+  _REGION: us-west1
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:${_TAG}
+      - .
+
+# Listing the image here makes Cloud Build push it after a successful build.
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_IMAGE}:${_TAG}
+
+options:
+  # Log to Cloud Logging only — avoids the "logs bucket / service-account"
+  # requirement some projects hit with the default logging mode.
+  logging: CLOUD_LOGGING_ONLY
+  # Faster than the default e2-standard-2 for the npm ci + pip install steps.
+  machineType: E2_HIGHCPU_8
+
+timeout: 1200s

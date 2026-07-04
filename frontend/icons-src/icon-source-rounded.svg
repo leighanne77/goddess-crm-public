@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Lynda PWA app icon (rounded, "any" purpose) — source for pwa-192/512.png.
+  Reuses the current favicon mark (DIN Red letters on a cream field) so the
+  installed home-screen icon matches the browser tab. Swap the letters/colors
+  here (and re-render) to move to a DIN mark.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#F5EEE0"/>
+  <text
+    x="256" y="312"
+    font-family="Impact, 'Arial Black', 'Helvetica Neue', sans-serif"
+    font-weight="900"
+    font-size="168"
+    text-anchor="middle"
+    fill="#C8202F"
+    letter-spacing="-6"
+  >DIN</text>
+</svg>

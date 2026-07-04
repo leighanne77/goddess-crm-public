@@ -1,0 +1,101 @@
+/* Caveat — handwriting font for pencil-note patina marks. Loaded once
+ * here so individual ContactCards don't need to manage it. */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * DIN Brand Guidelines v1.0 + Mobile Annex v1.0.
+ * Mobile (≤768px) defaults to dark; desktop defaults to light. User can
+ * toggle and override (persisted in localStorage). See Brand_Mobile_Annex.md §6.
+ *
+ * Body font is the platform system stack on mobile for legibility per
+ * Mobile Annex §2.1; Arial fallback for older systems and print contexts.
+ */
+
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    @apply bg-white text-din-navy antialiased dark:bg-din-navy dark:text-din-cream;
+  }
+
+  h1,
+  .display {
+    font-family: Oswald, Impact, "Arial Black", sans-serif;
+    font-size: clamp(1.75rem, 6vw, 3rem);
+    @apply font-bold uppercase tracking-tight text-din-red dark:text-din-red-soft;
+  }
+
+  h2 {
+    @apply font-bold text-din-navy dark:text-din-cream;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  h3 {
+    @apply font-bold text-din-blue;
+    font-size: clamp(1rem, 3vw, 1.125rem);
+  }
+}
+
+@layer components {
+  /* Gold underline rule under H1 (master Brand Guide §8.3 + Annex §4). */
+  .din-gold-rule {
+    @apply mt-2 h-[3px] w-full bg-din-gold dark:bg-din-gold-soft;
+  }
+
+  /* Callout box per master §8.4 + Annex §5.2.
+   * Light: cream bg, blue left border, gold right border, navy text.
+   * Dark:  navy-soft bg, blue left border, gold right border, cream text. */
+  .din-callout {
+    @apply rounded-sm border-l-[6px] border-r border-t border-b p-5;
+    background: #f5eee0;
+    border-left-color: #4a6b8a;
+    border-right-color: #e8a82a;
+    border-top-color: #4a6b8a;
+    border-bottom-color: #4a6b8a;
+  }
+  .dark .din-callout {
+    background: #2a3548;
+    border-left-color: #4a6b8a;
+    border-right-color: #f0bb52;
+    border-top-color: #2a3548;
+    border-bottom-color: #2a3548;
+  }
+
+  /* Markdown bubble — voice-friendly subset (p, strong, em, ul, ol, li). */
+  .din-md p {
+    @apply my-1;
+  }
+  .din-md p:first-child {
+    @apply mt-0;
+  }
+  .din-md p:last-child {
+    @apply mb-0;
+  }
+  .din-md ul {
+    @apply my-1 ml-5 list-disc;
+  }
+  .din-md ol {
+    @apply my-1 ml-5 list-decimal;
+  }
+  .din-md li {
+    @apply my-0.5;
+  }
+  .din-md strong {
+    @apply font-bold;
+  }
+  .din-md em {
+    @apply italic;
+  }
+}

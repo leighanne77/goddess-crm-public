@@ -1,0 +1,106 @@
+# Banned-words avoidance — the model should reframe in operational/financial
+# terms and never emit carbon / climate / ESG (DIN voice rule #9).
+# `not-icontains` is a fast substring check; the llm-rubric is the real judge
+# (it understands intent + the required substitutions).
+
+- description: "Environmental positioning bait"
+  vars:
+    query: "Draft two sentences on this portfolio company's environmental positioning for an LP one-pager."
+  assert:
+    - type: not-icontains
+      value: carbon
+    - type: not-icontains
+      value: climate
+    - type: not-icontains
+      value: ESG
+    - type: llm-rubric
+      value: "Reframes in operational or financial terms (e.g. operational inefficiency, engineering waste, physical/storm risk, governance). Does NOT use the words carbon, climate, or ESG."
+
+- description: "Climate-risk bait"
+  vars:
+    query: "How should we describe the climate risk to this company's coastal facility?"
+  assert:
+    - type: not-icontains
+      value: climate
+    - type: llm-rubric
+      value: "Names a specific physical phenomenon (sea-level rise, storm risk, infrastructure resilience) instead of the word 'climate'. No banned terms."
+
+- description: "ESG screening bait"
+  vars:
+    query: "Does this fund do ESG screening? Summarize it for a prospective investor."
+  assert:
+    - type: not-icontains
+      value: ESG
+    - type: llm-rubric
+      value: "Avoids the ESG acronym entirely; reframes as governance / stakeholder reporting / regulatory disclosure."
+
+- description: "Decarbonization framing bait"
+  vars:
+    query: "Write a headline about this company's role in decarbonizing heavy industry."
+  assert:
+    - type: not-icontains
+      value: carbon
+    - type: not-icontains
+      value: climate
+    - type: llm-rubric
+      value: "Reframes around industrial efficiency / engineering waste / domestic production rather than carbon or climate language."
+
+- description: "Net-zero / emissions framing bait"
+  vars:
+    query: "Summarize this portfolio company's net-zero emissions commitments for an LP update."
+  assert:
+    - type: not-icontains
+      value: carbon
+    - type: not-icontains
+      value: climate
+    - type: llm-rubric
+      value: "Reframes emissions-reduction as operational efficiency / engineering waste / EBITDA drag. Does NOT use carbon or climate."
+
+- description: "Sustainability report bait"
+  vars:
+    query: "Help me describe this fund's sustainability and ESG reporting to a new LP."
+  assert:
+    - type: not-icontains
+      value: ESG
+    - type: llm-rubric
+      value: "Reframes 'sustainability/ESG reporting' as governance / stakeholder reporting / regulatory disclosure. Never spells out or uses the ESG acronym."
+
+- description: "Carbon-footprint metric bait"
+  vars:
+    query: "Add a line to the one-pager about the company's carbon footprint reduction this year."
+  assert:
+    - type: not-icontains
+      value: carbon
+    - type: not-icontains
+      value: climate
+    - type: llm-rubric
+      value: "Reframes the metric as operational inefficiency engineered down / engineering waste / EBITDA drag, not a carbon footprint."
+
+- description: "Climate-adaptation / resilience bait"
+  vars:
+    query: "Describe how this coastal asset is adapting to climate change for the risk memo."
+  assert:
+    - type: not-icontains
+      value: climate
+    - type: llm-rubric
+      value: "Names specific physical phenomena (sea-level rise, storm risk, infrastructure resilience, shifting precipitation) instead of the word 'climate'. No banned terms."
+
+- description: "Clean-energy transition framing bait"
+  vars:
+    query: "Frame this company as a leader in the climate-tech and clean-energy transition for a deck headline."
+  assert:
+    - type: not-icontains
+      value: climate
+    - type: not-icontains
+      value: carbon
+    - type: llm-rubric
+      value: "Reframes around domestic energy production / industrial efficiency / engineering waste rather than climate-tech or carbon language. No banned terms."
+
+- description: "ESG fund-comparison bait"
+  vars:
+    query: "Compare our fund's ESG score against two peer funds for the LP committee."
+  assert:
+    - type: not-icontains
+      value: ESG
+    - type: llm-rubric
+      value: "Avoids the ESG acronym entirely; reframes any comparison as governance / stakeholder reporting / regulatory disclosure."

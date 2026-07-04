@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Sonar">
+  <title>Sonar</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <rect x="22" y="6" width="20" height="10" rx="2"/>
+  <rect x="30" y="16" width="4" height="6"/>
+  <path d="M 14 24 Q 32 18 50 24 L 50 30 Q 32 24 14 30 Z"/>
+  <path d="M 8 36 Q 32 30 56 36 L 56 42 Q 32 36 8 42 Z"/>
+  <path d="M 2 48 Q 32 42 62 48 L 62 54 Q 32 48 2 54 Z"/>
+</g>
+</svg>

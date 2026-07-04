@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Flag">
+  <title>Flag</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <rect x="10" y="4" width="4" height="56"/>
+  <path d="M 14 8 L 56 8 L 48 18 L 56 28 L 14 28 Z"/>
+</g>
+</svg>

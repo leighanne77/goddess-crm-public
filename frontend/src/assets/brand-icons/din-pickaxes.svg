@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Pickaxes">
+  <title>Pickaxes</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+    <g transform="rotate(-32 32 34)">
+      <rect x="30" y="18" width="4" height="40"/>
+      <polygon points="12,10 34,6 52,10 54,16 50,22 34,20 12,22 8,16"/>
+    </g>
+    <g transform="rotate(32 32 34)">
+      <rect x="30" y="18" width="4" height="40"/>
+      <polygon points="12,10 34,6 52,10 54,16 50,22 34,20 12,22 8,16"/>
+    </g>
+  </g>
+</svg>

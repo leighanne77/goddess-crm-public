@@ -1,0 +1,61 @@
+[project]
+name = "lynda-crm"
+version = "0.1.0"
+description = "Lynda — voice-enabled team CRM for DIN"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+    "sqlalchemy>=2.0.25",
+    "alembic>=1.13.0",
+    "psycopg[binary]>=3.1.18",
+    "pydantic[email]>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "email-validator>=2.1.0",
+    "anthropic>=0.25.0",
+    "python-jose[cryptography]>=3.3.0",
+    "httpx>=0.27.0",
+    "google-api-python-client>=2.120.0",
+    "google-auth>=2.28.0",
+    "google-cloud-speech>=2.39.0",
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=24.2.0",
+    "isort>=5.13.0",
+    "flake8>=7.0.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+    "pydantic-to-typescript>=2.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "integration: live-API tests that hit real providers (skipped by default; run with -m integration)",
+]

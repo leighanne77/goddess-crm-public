@@ -1,0 +1,17 @@
+.env
+.gcp-secrets/
+*.pyc
+__pycache__/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.DS_Store
+.idea/
+.vscode/
+.claude/settings.local.json
+docs/

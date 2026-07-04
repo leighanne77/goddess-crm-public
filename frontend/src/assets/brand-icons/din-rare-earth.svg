@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Rare Earth">
+  <title>Rare Earth</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <polygon points="32,4 56,18 56,46 32,60 8,46 8,18"/>
+  <polygon fill="#F5EEE0" points="32,4 32,32 56,18"/>
+</g>
+</svg>

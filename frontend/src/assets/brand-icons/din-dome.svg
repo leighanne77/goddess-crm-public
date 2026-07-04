@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Dome">
+  <title>Dome</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <path d="M 8 46 Q 8 18 32 18 Q 56 18 56 46 Z"/>
+  <rect x="4" y="46" width="56" height="6"/>
+  <rect fill="#F5EEE0" x="14" y="34" width="4" height="12"/>
+  <rect fill="#F5EEE0" x="24" y="30" width="4" height="16"/>
+  <rect fill="#F5EEE0" x="36" y="30" width="4" height="16"/>
+  <rect fill="#F5EEE0" x="46" y="34" width="4" height="12"/>
+  <circle cx="32" cy="14" r="4"/>
+  <rect x="30" y="6" width="4" height="8"/>
+</g>
+</svg>

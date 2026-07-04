@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Satellite">
+  <title>Satellite</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <rect x="24" y="22" width="16" height="22"/>
+  <rect x="2" y="26" width="20" height="14"/>
+  <rect x="42" y="26" width="20" height="14"/>
+  <rect fill="#F5EEE0" x="10" y="26" width="2" height="14"/>
+  <rect fill="#F5EEE0" x="52" y="26" width="2" height="14"/>
+  <rect fill="#F5EEE0" x="2" y="32" width="20" height="2"/>
+  <rect fill="#F5EEE0" x="42" y="32" width="20" height="2"/>
+  <rect x="30" y="14" width="4" height="8"/>
+  <circle cx="32" cy="10" r="5"/>
+  <rect x="30" y="44" width="4" height="8"/>
+</g>
+</svg>

@@ -1,0 +1,49 @@
+# Things that should never land in the runtime image.
+# The Dockerfile uses explicit COPY statements, but .dockerignore
+# is belt-and-suspenders for anyone who switches to `COPY . .` later.
+
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node — frontend builds in stage 1 with a fresh npm ci.
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Secrets + local-only config never belong in the image.
+.env
+.env.*
+!.env.example
+.gcp-secrets/
+
+# Version control.
+.git/
+.gitignore
+
+# Tests are not needed at runtime.
+tests/
+htmlcov/
+.coverage
+
+# Developer tooling / docs — not runtime.
+.vscode/
+.idea/
+.claude/
+scripts/
+# Internal reference docs (gitignored). Note: the *.md glob below only
+# matches top-level files, so the docs/ tree needs its own line.
+docs/
+*.md
+!README.md
+
+# Misc.
+.DS_Store
+*.swp

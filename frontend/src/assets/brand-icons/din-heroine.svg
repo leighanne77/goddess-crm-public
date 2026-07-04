@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+
+  <!-- Transparent background -->
+
+  <!-- All in DIN Navy #1A2332, flat silhouette -->
+
+  <!-- HAIR BACK — drawn first so head sits on top -->
+  <!-- Wide curtain of hair falling straight down the back, wider than shoulders -->
+  <path d="M 48,42 Q 44,50 42,65 Q 40,82 40,100 Q 40,118 44,132 Q 52,140 70,140 Q 88,140 96,132 Q 100,118 100,100 Q 100,82 98,65 Q 96,50 92,42 Q 82,38 70,38 Q 58,38 48,42 Z" fill="#1A2332"/>
+
+  <!-- BODY / SHOULDERS -->
+  <path d="M 35,140 L 35,108 Q 38,100 52,96 L 58,92 L 82,92 L 88,96 Q 102,100 105,108 L 105,140 Z" fill="#1A2332"/>
+
+  <!-- Bustier top scallop detail -->
+  <path d="M 52,96 Q 61,88 70,88 Q 79,88 88,96 Q 82,92 70,91 Q 58,92 52,96 Z" fill="#1A2332"/>
+
+  <!-- RED accent band — top of bustier -->
+  <path d="M 52,95 Q 61,91 70,90 Q 79,91 88,95 L 86,100 Q 78,96 70,95 Q 62,96 54,100 Z" fill="#C8202F"/>
+
+  <!-- NECK -->
+  <path d="M 62,88 L 62,76 L 78,76 L 78,88 Q 74,90 70,90 Q 66,90 62,88 Z" fill="#1A2332"/>
+
+  <!-- HEAD - solid oval, sits in front of hair -->
+  <ellipse cx="70" cy="58" rx="24" ry="28" fill="#1A2332"/>
+
+  <!-- Top crown connects head to hair -->
+  <ellipse cx="70" cy="36" rx="22" ry="10" fill="#1A2332"/>
+
+  <!-- TIARA BAND — gold -->
+  <path d="M 48,47 Q 58,43 70,42 Q 82,43 92,47 L 90,52 Q 80,48 70,47 Q 60,48 50,52 Z" fill="#E8A82A"/>
+
+  <!-- Tiara center crown point -->
+  <polygon points="70,38 75,45 65,45" fill="#E8A82A"/>
+
+  <!-- BLUE STAR on tiara center — DIN Blue #4A6B8A -->
+  <polygon
+    points="70,39 71.8,44 77,44 72.8,47 74.4,52 70,49 65.6,52 67.2,47 63,44 68.2,44"
+    fill="#4A6B8A"/>
+
+</svg>

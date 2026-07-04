@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="EVE — Exit Value Enhancer">
+  <title>EVE — Exit Value Enhancer</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+    <rect x="31" y="4" width="2" height="11"/>
+    <path d="M 32 9 Q 26 3 21 7 Q 25 13 32 11 Z"/>
+    <path d="M 32 9 Q 38 3 43 7 Q 39 13 32 11 Z"/>
+    <path d="M 12 14 L 52 14 L 52 32 Q 52 50 32 58 Q 12 50 12 32 Z"/>
+    <path fill="#F5EEE0" d="M 22 32 L 32 22 L 42 32 L 36 32 L 36 48 L 28 48 L 28 32 Z"/>
+  </g>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Power Tower">
+  <title>Power Tower</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+
+    <!-- BASE LEGS — two splayed feet -->
+    <polygon points="24,60 28,42 36,42 40,60"/>
+    <polygon points="10,60 28,42 30,42 18,60"/>
+    <polygon points="54,60 36,42 34,42 46,60"/>
+
+    <!-- GROUND BAR -->
+    <rect x="8" y="57" width="48" height="3" rx="1"/>
+
+    <!-- MAIN TOWER BODY — tapered lattice -->
+    <!-- Left leg -->
+    <polygon points="28,42 30,10 31,10 29,42"/>
+    <!-- Right leg -->
+    <polygon points="36,42 34,10 33,10 35,42"/>
+
+    <!-- CROSS BRACING — X braces at 3 levels -->
+    <!-- Lower brace -->
+    <polygon points="28,42 36,42 35,34 29,34"/>
+    <line x1="28" y1="42" x2="36" y2="34"/>
+    <line x1="36" y1="42" x2="28" y2="34"/>
+    <polygon points="29,42 28,42 29,34 30,34"/>
+    <polygon points="35,42 36,42 35,34 34,34"/>
+    <!-- X cross lower -->
+    <polygon points="28,42 36,34 35,34 27,42"/>
+    <polygon points="36,42 28,34 29,34 37,42"/>
+
+    <!-- Mid brace -->
+    <polygon points="29,34 35,34 34,26 30,26"/>
+    <polygon points="29,34 35,26 34,26 28,34"/>
+    <polygon points="35,34 29,26 30,26 36,34"/>
+
+    <!-- Upper brace -->
+    <polygon points="30,26 34,26 33,18 31,18"/>
+    <polygon points="30,26 34,18 33,18 29,26"/>
+    <polygon points="34,26 30,18 31,18 35,26"/>
+
+    <!-- CROSSARMS — wide at bottom, narrow at top -->
+    <!-- Lower crossarm -->
+    <rect x="14" y="38" width="36" height="4" rx="1"/>
+    <!-- Mid crossarm -->
+    <rect x="18" y="26" width="28" height="3" rx="1"/>
+    <!-- Upper crossarm -->
+    <rect x="22" y="15" width="20" height="3" rx="1"/>
+
+    <!-- INSULATOR STRINGS — small circles hanging from arm ends -->
+    <!-- Lower arm -->
+    <circle cx="15" cy="44" r="2"/>
+    <circle cx="49" cy="44" r="2"/>
+    <circle cx="32" cy="44" r="2"/>
+    <!-- Mid arm -->
+    <circle cx="19" cy="31" r="1.5"/>
+    <circle cx="45" cy="31" r="1.5"/>
+    <!-- Upper arm -->
+    <circle cx="23" cy="20" r="1.5"/>
+    <circle cx="41" cy="20" r="1.5"/>
+
+    <!-- PEAK / LIGHTNING ROD -->
+    <polygon points="31,10 33,10 32,4"/>
+
+  </g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Torpedo">
+  <title>Torpedo</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+    <path d="M 4 32 Q 4 22 18 22 L 50 22 L 54 28 L 54 36 L 50 42 L 18 42 Q 4 42 4 32 Z"/>
+    <polygon points="40,22 48,22 46,12 42,12"/>
+    <polygon points="40,42 48,42 46,52 42,52"/>
+    <rect x="54" y="28" width="4" height="8"/>
+  </g>
+</svg>

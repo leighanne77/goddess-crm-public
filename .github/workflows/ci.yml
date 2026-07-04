@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (pytest)
+    runs-on: ubuntu-latest
+
+    # Postgres service container — mirrors the local docker-compose setup.
+    # Tests connect as lynda/lynda_dev_only on 127.0.0.1:5432 against the
+    # lynda_test database. Credentials match app/config.py defaults so
+    # no env-var fiddling is needed.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: lynda
+          POSTGRES_PASSWORD: lynda_dev_only
+          POSTGRES_DB: lynda_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U lynda"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      # The Postgres service container's POSTGRES_DB only creates one DB
+      # (lynda_test). One safety-rails test connects to the "lynda" dev
+      # DB to confirm columns exist there too — create it explicitly.
+      - name: Create dev database
+        env:
+          PGPASSWORD: lynda_dev_only
+        run: psql -h localhost -U lynda -d lynda_test -c "CREATE DATABASE lynda OWNER lynda;"
+
+      - name: Apply Alembic migrations to test DB
+        env:
+          DATABASE_URL: postgresql+psycopg://lynda:lynda_dev_only@localhost:5432/lynda_test
+        run: alembic upgrade head
+
+      - name: Apply Alembic migrations to dev DB (for safety-rail tests)
+        env:
+          DATABASE_URL: postgresql+psycopg://lynda:lynda_dev_only@localhost:5432/lynda
+        run: alembic upgrade head
+
+      - name: Run pytest
+        env:
+          DATABASE_URL: postgresql+psycopg://lynda:lynda_dev_only@localhost:5432/lynda
+          TEST_DATABASE_URL: postgresql+psycopg://lynda:lynda_dev_only@localhost:5432/lynda_test
+        run: pytest -q
+
+      # Check that frontend/src/api/generated_types.ts matches what the
+      # Pydantic models would generate right now. If it's stale, CI
+      # fails and a developer has to run `make sync-types` + commit.
+      - name: Install frontend deps (for json2ts)
+        run: cd frontend && npm ci
+
+      - name: Check Pydantic -> TS type sync
+        run: |
+          python scripts/sync_types.py
+          git diff --exit-code frontend/src/api/generated_types.ts || \
+            (echo "::error::generated_types.ts is out of sync with Pydantic. Run 'make sync-types' locally and commit." && exit 1)
+
+  frontend:
+    name: Frontend (build + e2e)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: Run Playwright smoke
+        run: npm run test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7

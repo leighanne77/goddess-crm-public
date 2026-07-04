@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Lightning Bolt">
+  <title>Lightning Bolt</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+
+    <!-- BOLD CHUNKY ZIGZAG BOLT -->
+    <polygon points="38,4 18,36 30,36 26,60 46,28 34,28"/>
+
+  </g>
+</svg>

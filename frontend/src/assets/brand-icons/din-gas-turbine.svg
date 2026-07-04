@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Gas Turbine">
+  <title>Gas Turbine</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <rect x="8" y="22" width="48" height="20" rx="3"/>
+  <rect x="4" y="26" width="4" height="12"/>
+  <rect x="56" y="26" width="4" height="12"/>
+  <circle fill="#F5EEE0" cx="22" cy="32" r="7"/>
+  <circle cx="22" cy="32" r="2"/>
+  <g fill="#F5EEE0">
+    <rect x="20" y="25" width="4" height="14"/>
+    <rect x="15" y="30" width="14" height="4"/>
+    <rect x="15" y="30" width="14" height="4" transform="rotate(45 22 32)"/>
+    <rect x="15" y="30" width="14" height="4" transform="rotate(-45 22 32)"/>
+  </g>
+  <rect x="38" y="20" width="16" height="4"/>
+  <rect x="38" y="40" width="16" height="4"/>
+</g>
+</svg>

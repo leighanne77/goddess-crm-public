@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Magnet">
+  <title>Magnet</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <path d="M 10 10 L 24 10 L 24 38 Q 24 44 32 44 Q 40 44 40 38 L 40 10 L 54 10 L 54 40 Q 54 58 32 58 Q 10 58 10 40 Z"/>
+  <rect fill="#F5EEE0" x="10" y="10" width="14" height="8"/>
+  <rect fill="#F5EEE0" x="40" y="10" width="14" height="8"/>
+</g>
+</svg>

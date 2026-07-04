@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Smelter">
+  <title>Smelter</title>
+  <g fill="#1A2332" fill-rule="evenodd">
+  <rect x="6" y="48" width="52" height="10"/>
+  <polygon points="14,48 14,28 50,28 50,48"/>
+  <polygon points="20,28 20,14 44,14 44,28"/>
+  <rect x="28" y="4" width="8" height="14"/>
+  <polygon points="26,4 38,4 32,-2" />
+</g>
+</svg>

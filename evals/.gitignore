@@ -1,0 +1,7 @@
+# Generated snapshot of the production system prompt (regenerate, don't commit)
+system_prompt.txt
+# promptfoo / node artifacts
+node_modules/
+.promptfoo/
+output.json
+*.log
