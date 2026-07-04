@@ -109,7 +109,29 @@ export interface PatinaOverridePayload {
         | CheckMarkItem
         | TypewrittenItem
         | MailingLabelItem
-        | StickerItem,
+        | StickerItem
+      ]
+    | [
+        (
+          | SmudgeItem
+          | DogEarItem
+          | PencilNoteItem
+          | DoodleItem
+          | CheckMarkItem
+          | TypewrittenItem
+          | MailingLabelItem
+          | StickerItem
+        ),
+        (
+          | SmudgeItem
+          | DogEarItem
+          | PencilNoteItem
+          | DoodleItem
+          | CheckMarkItem
+          | TypewrittenItem
+          | MailingLabelItem
+          | StickerItem
+        )
       ]
     | [
         (
@@ -132,8 +154,6 @@ export interface PatinaOverridePayload {
           | MailingLabelItem
           | StickerItem
         ),
-      ]
-    | [
         (
           | SmudgeItem
           | DogEarItem
@@ -143,27 +163,7 @@ export interface PatinaOverridePayload {
           | TypewrittenItem
           | MailingLabelItem
           | StickerItem
-        ),
-        (
-          | SmudgeItem
-          | DogEarItem
-          | PencilNoteItem
-          | DoodleItem
-          | CheckMarkItem
-          | TypewrittenItem
-          | MailingLabelItem
-          | StickerItem
-        ),
-        (
-          | SmudgeItem
-          | DogEarItem
-          | PencilNoteItem
-          | DoodleItem
-          | CheckMarkItem
-          | TypewrittenItem
-          | MailingLabelItem
-          | StickerItem
-        ),
+        )
       ];
 }
 /**
@@ -213,13 +213,7 @@ export interface PencilNoteItem {
 export interface TypewrittenItem {
   kind: "typewritten";
   text: string;
-  color?:
-    | "greenish"
-    | "darkRed"
-    | "darkBlue"
-    | "gray"
-    | "lightBrown"
-    | "tanBrown";
+  color?: "greenish" | "darkRed" | "darkBlue" | "gray" | "lightBrown" | "tanBrown";
   position?:
     | (
         | "top-left"
