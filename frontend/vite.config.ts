@@ -22,9 +22,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       injectRegister: "auto",
       manifest: {
-        name: "Lynda — DIN CRM",
-        short_name: "Lynda",
-        description: "Voice-enabled team CRM for DIN.",
+        name: "Goddess CRM",
+        short_name: "Goddess",
+        description: "Voice-first team CRM + a deterministic warm-introduction engine.",
         id: "/",
         start_url: "/",
         scope: "/",
