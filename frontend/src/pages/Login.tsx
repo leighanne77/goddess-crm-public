@@ -20,7 +20,7 @@ export default function Login() {
           <div className="din-gold-rule mx-auto mt-3 max-w-xs" />
 
           <p className="mx-auto mt-4 max-w-md text-sm font-medium tracking-wide text-din-blue dark:text-din-cream">
-            Connecting private capital to deep-tech and defense-critical
+            Connecting private capital to deep-tech and dual-use
             industrial builds.
           </p>
 

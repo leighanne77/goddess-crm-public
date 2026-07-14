@@ -109,7 +109,7 @@ def export_audit_csv(
     """Stream the entire filtered audit log as a CSV download.
 
     Useful for compliance audits and offline review — important given
-    the defense-adjacent angle. Same filters as the JSON endpoint, but
+    the dual-use angle. Same filters as the JSON endpoint, but
     no pagination: returns ALL matching rows in one file.
     """
     rows_stmt, _ = _audit_query(user_id=user_id, action=action)
