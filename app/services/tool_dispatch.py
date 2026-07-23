@@ -14,6 +14,7 @@ Two error patterns:
     normal results and can explain to the user.
 """
 
+import logging
 from collections.abc import Callable
 from typing import Any
 
@@ -21,7 +22,9 @@ from pydantic import ValidationError as PydanticValidationError
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.models import Contact, NextStep, Relationship, User
+from app.services import agent_context, confirm_tokens, policy
 from app.services.audit import hash_payload, write_audit_row
 from app.services.fly_status import fly_status_search_priority, unknown_search_rank
 from app.services.google_tasks import (
@@ -51,6 +54,8 @@ from app.services.tools import (
 from app.services.user_link import user_id_for_email
 
 SEARCH_RESULT_LIMIT = 25
+
+logger = logging.getLogger(__name__)
 
 
 def _jsonable(value: Any) -> Any:
@@ -643,6 +648,25 @@ def _handle_delete(
                 f"Contact {params.contact_id} is visible but not owned by you."
             ),
         }
+    # Server-side two-step (P-07). Without a valid token the delete
+    # NEVER happens — we mint one, hand it back, and the model must ask
+    # the human before returning it. Bound to (action, contact, user),
+    # 10-minute expiry.
+    if not params.confirm_token or not confirm_tokens.verify(
+        params.confirm_token, "delete_contact", contact.id, user.id
+    ):
+        return {
+            "error": "confirm_required",
+            "message": (
+                f'Deleting "{contact.name}" needs explicit confirmation. '
+                "Ask the user to confirm, and only after they say yes, "
+                "call delete_contact again with this confirm_token."
+            ),
+            "confirm_token": confirm_tokens.issue(
+                "delete_contact", contact.id, user.id
+            ),
+        }
+
     # Snapshot a small last-state summary BEFORE flipping deleted_at,
     # so the changelog can show "Deleted Marcus Sterling (Ironclad)".
     deletion_snapshot = {
@@ -1017,6 +1041,33 @@ def _handle_transfer_contact(
             ),
         }
 
+    # Server-side two-step (P-07), bound to BOTH the contact and the
+    # recipient — confirming a transfer to one teammate can never
+    # authorize one to anyone else.
+    if not params.confirm_token or not confirm_tokens.verify(
+        params.confirm_token,
+        "transfer_contact",
+        contact.id,
+        user.id,
+        extra=params.new_owner_email.lower(),
+    ):
+        return {
+            "error": "confirm_required",
+            "message": (
+                f'Transferring "{contact.name}" to '
+                f"{new_owner.name or new_owner.email} needs explicit "
+                "confirmation. Ask the user to confirm, and only after "
+                "they say yes, call transfer_contact again with this "
+                "confirm_token."
+            ),
+            "confirm_token": confirm_tokens.issue(
+                "transfer_contact",
+                contact.id,
+                user.id,
+                extra=params.new_owner_email.lower(),
+            ),
+        }
+
     old_owner_id = contact.owner_id
     old_owner = db.get(User, old_owner_id)
     old_owner_name = old_owner.name if old_owner else None
@@ -1254,8 +1305,38 @@ def dispatch_tool_call(
     params: dict[str, Any],
     current_user: User,
     db: Session,
+    agent_id: str = "dess-chat",
 ) -> dict[str, Any]:
-    """Validate name + params, then run the matching handler."""
+    """Validate name + params, then run the matching handler.
+
+    Agent harness: every call is evaluated against app/policies.yaml.
+    Shadow mode (POLICY_ENFORCE=false) only logs the verdict; enforce
+    mode blocks DENY — and a HARD deny (the per-agent kill switch)
+    blocks even in shadow. CONFIRM is enforced server-side by the
+    confirm tokens inside the destructive handlers. The whole call runs
+    inside an agent-context scope, so every audit row written underneath
+    is stamped with agent_id + policy_version.
+    """
+    decision = policy.evaluate(agent_id, name)
+    log = (
+        logger.warning if decision.verdict is not policy.Verdict.ALLOW else logger.info
+    )
+    log(
+        "policy verdict=%s agent=%s tool=%s reason=%s version=%s enforce=%s",
+        decision.verdict.value,
+        agent_id,
+        name,
+        decision.reason,
+        decision.policy_version,
+        get_settings().policy_enforce,
+    )
+    if decision.verdict is policy.Verdict.DENY and (
+        decision.hard or get_settings().policy_enforce
+    ):
+        raise ToolDispatchError(
+            f"Policy denied {name!r} for agent {agent_id!r}: {decision.reason}"
+        )
+
     if name not in TOOL_REGISTRY:
         raise ToolDispatchError(f"Unknown tool: {name!r}")
     if name not in HANDLERS:
@@ -1267,4 +1348,8 @@ def dispatch_tool_call(
     except PydanticValidationError as e:
         raise ToolDispatchError(f"Invalid params for {name}: {e.errors()}") from e
 
-    return HANDLERS[name](validated, current_user, db)
+    scope = agent_context.set_agent(agent_id, decision.policy_version)
+    try:
+        return HANDLERS[name](validated, current_user, db)
+    finally:
+        agent_context.clear(scope)

@@ -277,6 +277,7 @@ def test_changelog_update_carries_field_diff(
         {
             "name": "Marcus",
             "fly_status": "Fly List",
+            "is_private": False,
             "title": "Associate",
         },
         user,
@@ -394,13 +395,25 @@ def test_changelog_transfer_metadata_includes_old_and_new_owner(
         owner_id=leigh_anne.id,
         primary_fund="Maritime",
         fly_status="Must Fly",
+        is_private=False,
     )
     db.add(contact)
     db.commit()
 
-    dispatch_tool_call(
+    _first = dispatch_tool_call(
         "transfer_contact",
         {"contact_id": contact.id, "new_owner_email": heather_jo.email},
+        leigh_anne,
+        db,
+    )
+    assert _first["error"] == "confirm_required"
+    dispatch_tool_call(
+        "transfer_contact",
+        {
+            "contact_id": contact.id,
+            "new_owner_email": heather_jo.email,
+            "confirm_token": _first["confirm_token"],
+        },
         leigh_anne,
         db,
     )
@@ -449,6 +462,7 @@ def test_changelog_picks_up_change_request_filed_against_contact(
         owner_id=owner.id,
         primary_fund="Maritime",
         fly_status="Fly List",
+        is_private=False,
     )
     db.add(contact)
     db.commit()

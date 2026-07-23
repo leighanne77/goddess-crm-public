@@ -17,6 +17,7 @@ Voice-first team CRM **+ a deterministic warm-introduction engine** for **DIN �
 | Layer | Technology |
 | --- | --- |
 | **Assistant (LLM)** | Anthropic **Claude** via tool-use — natural language → Pydantic-schema-validated tool calls through a bounded dispatch loop (iteration cap, history truncation); untrusted text sandboxed in `<USER_DATA>` delimiters — `app/services/tool_dispatch.py`, `app/routers/chat.py` |
+| **Agent harness / policy layer** | Versioned rulebook (`app/policies.yaml`: per-agent tool allowlists, CONFIRM list, kill switch) + a deterministic engine — deny-by-default, **fail-closed**, shadow→enforce — evaluated on **every** tool dispatch; destructive ops are **server-gated two-step** (signed, expiring confirm tokens bound to action+contact+user, and recipient for transfers); every audit row stamped `agent_id` + `policy_version` — `app/services/policy.py`, `confirm_tokens.py`, `agent_context.py` |
 | **Warm-intro engine** | Pure-Python, **deterministic** path-scoring over an in-memory relationship graph — `affinity × connection ÷ hops`, hard safety gates (blocklist + outreach-consent) — `app/services/intro_pathfinder.py`, `intro_paths.py` |
 | **Voice** | Vendor-neutral, pluggable **speech-to-text** (Google Cloud Speech / Chirp) + **text-to-speech** (ElevenLabs), voice-activity detection, async UX for high-latency calls — `app/services/voice/` |
 | **Data & privacy** | **PostgreSQL** via SQLAlchemy 2.0 + Alembic (psycopg 3); three-tier contact visibility (visible / redacted / hidden) + reveal-fields whitelist, enforced at the **query layer** — `app/services/privacy.py` |
@@ -52,7 +53,7 @@ flowchart TD
     EXPORT --> PRIV
     PRIV --> DB[("PostgreSQL · SQLAlchemy + Alembic")]
 
-    LLM -. audited + cost-metered .-> GOV["Assurance · hashed audit · cost budgets · NIST AI RMF / SR 11-7"]
+    LLM -. audited + cost-metered .-> GOV["Assurance · policy-layer verdicts · hashed audit · cost budgets · NIST AI RMF / SR 11-7"]
     DB -. deploy .-> CR["Cloud Run · Cloud SQL · Cloud Build"]
 ```
 
@@ -118,10 +119,13 @@ Foundry, or a multi-agent (A2A / MCP) architecture.
 
 **Least-privilege on data (PII)**
 - Three-tier contact visibility — **visible / redacted / hidden** — `app/services/privacy.py`
+- *Share is an explicit choice:* `is_private` is a required field on every create (the tool rejects a create without the "share with the team?" answer); the model default is private — `app/services/tools.py`
 - Reveal-fields whitelist makes PII (name, email, phone, notes) structurally impossible to expose — `app/services/tool_dispatch.py`
 - Owner-only edits/transfers; soft-delete; PII-safe audit (payload hashed, never stored in plaintext) — `app/services/audit.py`
 
 **LLM / output guardrails**
+- *Policy layer:* every tool call gets an ALLOW/DENY/CONFIRM verdict from a versioned rulebook — deny-by-default, fail-closed, per-agent kill switch that bites even in shadow mode — `app/policies.yaml` + `app/services/policy.py`
+- *Two-step destructive ops:* delete/transfer never execute on the first call — the server issues a bound, expiring confirm token and only a second call carrying it back executes — `app/services/confirm_tokens.py`
 - System prompt with explicit safety rules (confirm-before-delete, ownership, redaction) — `app/routers/chat.py`
 - *Defense-in-depth content policy:* a runtime scrubber enforces the content policy after generation, backing up the prompt instruction — `app/services/voice_rules.py`
 - Untrusted input wrapped in `<USER_DATA>` delimiters so notes/messages are never executed as instructions — `app/routers/chat.py`
@@ -145,7 +149,7 @@ The **Measure / ongoing-monitoring** items (the SR 11-7 validation half) not yet
 - LLM **output** auditing — today tool calls are logged, not full response text
 - Broader **evals** for the scrubber + prompt-injection resistance
 - System-prompt **versioning + rollback**
-- Server-side **human-in-the-loop** approval for high-risk ops (deletes currently rely on the model asking for confirmation)
+- UI-level confirm buttons for destructive ops (the two-step confirm token is server-enforced today; the human "yes" still travels through the model's conversation)
 - **Data-retention / purge** policy
 
 **Acronyms:** *NIST AI RMF* — the US AI Risk Management Framework. *SR 11-7* — US model-risk

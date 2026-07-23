@@ -182,7 +182,19 @@ class CreateContactInput(BaseModel):
     primary_fund: PrimaryFund = "General"
     contact_type: ContactType = "Other"
     sectors: list[str] = Field(default_factory=list, max_length=20)
-    is_private: bool = False
+    # Required — like fly_status, the user must explicitly answer the
+    # "share with the team?" question on EVERY create. No default: if
+    # Claude calls without it, validation fails and Claude has to ask.
+    is_private: bool = Field(
+        ...,
+        description=(
+            "Required. The 'share with the team' choice — ask on every "
+            "create: 'Share with the team, or keep private to you?' "
+            "share with the team → is_private=false; keep private (the "
+            "norm) → is_private=true. Never guess and never assume from "
+            "silence — if the user hasn't answered, ask before creating."
+        ),
+    )
     gender: Gender = "Unknown"
     country: str | None = Field(None, max_length=100)
     metro: str | None = Field(
@@ -332,6 +344,15 @@ class DeleteContactInput(BaseModel):
     through visible_contacts_query. Owner-only."""
 
     contact_id: int = Field(..., gt=0)
+    confirm_token: str | None = Field(
+        None,
+        description=(
+            "Server-issued confirmation token. OMIT on the first call — "
+            "the result will be confirm_required plus a token. Ask the "
+            "user to confirm; only after an explicit yes, call again "
+            "passing that exact token. Never invent or reuse tokens."
+        ),
+    )
 
 
 class LinkContactsInput(BaseModel):
@@ -443,6 +464,17 @@ class TransferContactInput(BaseModel):
             "(e.g. sam@example.com, jordan@example.com). "
             "Must be a member of the DIN team — non-team emails are "
             "rejected."
+        ),
+    )
+    confirm_token: str | None = Field(
+        None,
+        description=(
+            "Server-issued confirmation token (two-step, same as "
+            "delete_contact): omit on the first call, receive "
+            "confirm_required + a token, ask the user, and re-call with "
+            "the token only after an explicit yes. The token is bound to "
+            "this exact contact AND recipient — changing either needs a "
+            "fresh confirmation."
         ),
     )
 

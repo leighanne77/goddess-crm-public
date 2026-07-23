@@ -41,11 +41,13 @@ def test_create_requires_name() -> None:
 
 
 def test_create_accepts_minimal_fields() -> None:
-    contact = CreateContactInput(name="Jane Doe", fly_status="Maybe Must Fly")
+    contact = CreateContactInput(
+        name="Jane Doe", fly_status="Maybe Must Fly", is_private=True
+    )
     assert contact.name == "Jane Doe"
     assert contact.primary_fund == "General"
     assert contact.contact_type == "Other"
-    assert contact.is_private is False
+    assert contact.is_private is True
     assert contact.fly_status == "Maybe Must Fly"
 
 
@@ -53,6 +55,13 @@ def test_create_requires_fly_status() -> None:
     """fly_status is required — Claude must ask the user for it."""
     with pytest.raises(ValidationError):
         CreateContactInput(name="Jane Doe")
+
+
+def test_create_requires_is_private() -> None:
+    """The 'share with the team' answer is required on EVERY create —
+    like fly_status, Claude must ask; silence is not consent either way."""
+    with pytest.raises(ValidationError):
+        CreateContactInput(name="Jane Doe", fly_status="Maybe Must Fly")
 
 
 def test_create_validates_email_format() -> None:

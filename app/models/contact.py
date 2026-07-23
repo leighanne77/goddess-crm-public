@@ -29,7 +29,10 @@ class Contact(Base):
 
     # Ownership & privacy
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    is_private: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Default PRIVATE: any write path that doesn't explicitly answer the
+    # "share with the team" question produces an owner-only contact —
+    # sharing is always an explicit choice.
+    is_private: Mapped[bool] = mapped_column(Boolean, default=True)
     shared_with: Mapped[list[int]] = mapped_column(
         ARRAY(Integer), default=list, server_default="{}"
     )

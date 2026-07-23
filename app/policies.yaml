@@ -1,0 +1,142 @@
+# DESS — Policy Registry (agent harness)
+#
+# Vocabulary:
+#   guardrail — one individual rule.
+#   agent harness — the enforced envelope around ONE agent (tools it may
+#     call, gates it must pass, what it structurally cannot do).
+#   policy layer — THIS file: the shared, versioned rulebook every
+#     harness reads. Policy is data; harnesses enforce it.
+#
+# Engine: app/services/policy.py — evaluate(agent_id, tool) →
+#   ALLOW | DENY | CONFIRM. Deny-by-default (a tool not listed is DENIED),
+#   fail-closed (if this file can't load, everything is DENIED).
+#   Shadow mode: POLICY_ENFORCE=false logs would-be verdicts without
+#   changing behavior; flip to true to enforce. Exception: the per-agent
+#   kill switch (enabled: false) blocks HARD even in shadow.
+#
+# Change discipline: bump `version` on ANY rule change; the version is
+# stamped into logs and audit rows so every decision is attributable to
+# the exact rulebook in force.
+
+version: 1
+
+agents:
+  dess-chat:
+    # KILL SWITCH: set false to stop this agent dead (applies even in
+    # shadow mode). Requires a redeploy to take effect.
+    enabled: true
+    description: >-
+      The conversational assistant (Claude tool-use dispatch loop in
+      app/routers/chat.py). The only agent in this public showcase; the
+      same pattern scales to additional agents by adding entries here.
+    tools:
+      allow:
+        - search_contacts
+        - create_contact
+        - update_contact
+        - link_contacts
+        - find_intro_paths
+        - get_pipeline_summary
+        - request_change
+        - resolve_change_request
+        - create_google_task
+        - transfer_contact
+        - create_next_step
+        - complete_next_step
+      # Destructive ops: CONFIRM = human confirmation, enforced
+      # server-side by two-step confirm tokens inside the handlers.
+      # transfer_contact is equally token-gated even though listed under
+      # allow — the gate lives in its handler.
+      confirm:
+        - delete_contact
+
+# ---------------------------------------------------------------------
+# The registry: every guardrail this codebase enforces, written down as
+# data. status: enforced | partial. Each entry names its enforcement
+# point (the harness) and the test that proves it.
+# ---------------------------------------------------------------------
+registry:
+  - id: P-01
+    name: tool-allowlist
+    rule: An agent may call only the tools in its registry; unknown tools are rejected.
+    enforced_at: app/services/tool_dispatch.py (TOOL_REGISTRY/HANDLERS) + this file
+    status: enforced
+    test: tests/test_tool_dispatch.py (unknown tool raises)
+
+  - id: P-02
+    name: schema-validated-args
+    rule: Every tool call is Pydantic-validated before execution; invalid args never reach a handler.
+    enforced_at: app/services/tool_dispatch.py (spec.input_model)
+    status: enforced
+    test: tests/test_tools.py
+
+  - id: P-03
+    name: privacy-three-tier
+    rule: Contact visibility (visible/redacted/hidden) is enforced at the query layer; private contacts 404 to non-owners and never appear in search, exports, or intro paths.
+    enforced_at: app/services/privacy.py
+    status: enforced
+    test: tests/test_tool_dispatch.py (privacy sections)
+
+  - id: P-04
+    name: llm-data-boundary
+    rule: The reveal-fields whitelist makes PII structurally unexposable on redacted rows; sensitive data never rides into an LLM context window.
+    enforced_at: app/services/tool_dispatch.py + privacy.py
+    status: enforced
+    test: tests/test_tool_dispatch.py
+
+  - id: P-05
+    name: user-data-sandbox
+    rule: Untrusted text is wrapped in <USER_DATA> delimiters and treated as data, never instructions.
+    enforced_at: app/routers/chat.py
+    status: enforced
+    test: evals/promptfooconfig.yaml (injection cases)
+
+  - id: P-06
+    name: voice-rules-scrubber
+    rule: Banned vocabulary is scrubbed from replies after generation (defense in depth behind the prompt rule).
+    enforced_at: app/services/voice_rules.py
+    status: enforced
+    test: tests/test_voice_preflight.py + evals
+
+  - id: P-07
+    name: confirm-before-destroy
+    rule: Destructive ops (delete_contact, transfer_contact) are server-gated two-step — the first call always returns confirm_required + a bound, expiring token; only a second call carrying it back executes. Transfer tokens bind the recipient too.
+    enforced_at: app/services/confirm_tokens.py + tool_dispatch handlers (server) + system prompt (the ask)
+    status: enforced
+    test: tests/test_confirm_tokens.py + tests/test_tool_dispatch.py (two-step)
+    note: remaining gap — the human "yes" travels through the model's conversation; a UI-level confirm button is the end state.
+
+  - id: P-08
+    name: share-required-on-create
+    rule: Every contact create must answer "share with the team?" explicitly; no default sharing. Model default is PRIVATE.
+    enforced_at: app/services/tools.py (is_private required — structural), app/models/contact.py (default true)
+    status: enforced
+    test: tests/test_tools.py::test_create_requires_is_private
+
+  - id: P-09
+    name: ownership-rules
+    rule: Owner-only edits/transfers/patina/fly-status; non-owner attempts become change requests, never silent writes.
+    enforced_at: app/services/tool_dispatch.py handlers
+    status: enforced
+    test: tests/test_tool_dispatch.py (forbidden_owner_only)
+
+  - id: P-10
+    name: no-llm-in-trust-path
+    rule: Access and warm-intro decisions are deterministic code; the model narrates but never decides who is reachable or visible.
+    enforced_at: app/services/intro_pathfinder.py + privacy.py (architecture)
+    status: enforced
+    test: tests/test_intro_pathfinder.py
+
+  - id: P-11
+    name: budgets-and-rate-limits
+    rule: Per-user daily token/STT/TTS budgets and per-user rate limits; overruns fail with explicit errors, not silent degradation.
+    enforced_at: app/routers/chat.py + app/services/rate_limit.py
+    status: enforced
+    test: tests/test_rate_limit*.py
+
+  - id: P-12
+    name: audit-every-write
+    rule: Every write lands a hashed-payload audit row with field-level diffs, stamped with agent_id + policy_version; payloads are never stored in plaintext.
+    enforced_at: app/services/audit.py + agent_context.py
+    status: enforced
+    test: tests/test_policy.py (stamping) + tests/test_tool_dispatch.py (audit rows)

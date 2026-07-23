@@ -44,6 +44,34 @@ def _make_contact(
     return contact
 
 
+def _confirmed_delete(db: Session, user: User, contact_id: int) -> dict:
+    """Drive the P-07 two-step: first call yields confirm_required + a
+    token; the second call (token attached) performs the delete."""
+    first = dispatch_tool_call("delete_contact", {"contact_id": contact_id}, user, db)
+    assert first["error"] == "confirm_required"
+    return dispatch_tool_call(
+        "delete_contact",
+        {"contact_id": contact_id, "confirm_token": first["confirm_token"]},
+        user,
+        db,
+    )
+
+
+def _confirmed_transfer(
+    db: Session, user: User, contact_id: int, new_owner_email: str
+) -> dict:
+    params = {"contact_id": contact_id, "new_owner_email": new_owner_email}
+    first = dispatch_tool_call("transfer_contact", params, user, db)
+    assert first["error"] == "confirm_required"
+    return dispatch_tool_call(
+        "transfer_contact",
+        {**params, "confirm_token": first["confirm_token"]},
+        user,
+        db,
+    )
+
+
+
 def test_unknown_tool_name_raises(
     db: Session, user_factory: Callable[..., User]
 ) -> None:
@@ -287,6 +315,7 @@ def test_create_records_owner_as_current_user(
             "name": "New Contact",
             "primary_fund": "Energy",
             "fly_status": "Maybe Must Fly",
+            "is_private": False,
         },
         user,
         db,
@@ -732,6 +761,7 @@ def test_tool_create_contact_writes_audit_row(
             "name": "Audit Me",
             "primary_fund": "Energy",
             "fly_status": "Maybe Must Fly",
+            "is_private": False,
         },
         user,
         db,
@@ -799,12 +829,7 @@ def test_tool_delete_soft_deletes_owned_contact(
     user = user_factory()
     contact = _make_contact(db, user, name="Doomed")
 
-    result = dispatch_tool_call(
-        "delete_contact",
-        {"contact_id": contact.id},
-        user,
-        db,
-    )
+    result = _confirmed_delete(db, user, contact.id)
     assert result == {"deleted": {"id": contact.id, "name": "Doomed"}}
 
     db.refresh(contact)
@@ -854,7 +879,7 @@ def test_tool_delete_writes_audit_row(
     user = user_factory()
     contact = _make_contact(db, user, name="Audit Delete Me")
 
-    dispatch_tool_call("delete_contact", {"contact_id": contact.id}, user, db)
+    _confirmed_delete(db, user, contact.id)
 
     rows = _audit_rows_for(db, user, "delete_contact")
     assert len(rows) == 1
@@ -1114,7 +1139,7 @@ def test_create_result_marks_caller_as_self_owner(
     alice = user_factory(email="alice@test.fake", name="Alex Rivera")
     result = dispatch_tool_call(
         "create_contact",
-        {"name": "New Person", "fly_status": "Must Fly"},
+        {"name": "New Person", "fly_status": "Must Fly", "is_private": False},
         alice,
         db,
     )
@@ -1201,12 +1226,7 @@ def test_owner_can_transfer_own_contact(
     new_owner = user_factory(email="bob@test.fake", name="Bob")
     contact = _make_contact(db, owner, name="Marcus")
 
-    result = dispatch_tool_call(
-        "transfer_contact",
-        {"contact_id": contact.id, "new_owner_email": new_owner.email},
-        owner,
-        db,
-    )
+    result = _confirmed_transfer(db, owner, contact.id, new_owner.email)
     assert "transferred" in result
     assert result["transferred"]["new_owner_id"] == new_owner.id
     assert result["transferred"]["by_admin"] is False
@@ -1246,12 +1266,7 @@ def test_admin_can_transfer_any_contact_including_private(
     new_owner = user_factory(email="carol@test.fake", name="Carol")
     contact = _make_contact(db, owner, name="Secret", is_private=True)
 
-    result = dispatch_tool_call(
-        "transfer_contact",
-        {"contact_id": contact.id, "new_owner_email": new_owner.email},
-        admin,
-        db,
-    )
+    result = _confirmed_transfer(db, admin, contact.id, new_owner.email)
     assert "transferred" in result
     assert result["transferred"]["by_admin"] is True
     db.refresh(contact)
@@ -1265,12 +1280,7 @@ def test_transfer_writes_audit_row(
     new_owner = user_factory(email="bob@test.fake", name="Bob")
     contact = _make_contact(db, owner, name="Marcus")
 
-    dispatch_tool_call(
-        "transfer_contact",
-        {"contact_id": contact.id, "new_owner_email": new_owner.email},
-        owner,
-        db,
-    )
+    _confirmed_transfer(db, owner, contact.id, new_owner.email)
 
     rows = _audit_rows_for(db, owner, "transfer_contact")
     assert len(rows) == 1

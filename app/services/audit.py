@@ -23,6 +23,7 @@ from typing import Any, TypeVar
 from sqlalchemy.orm import Session
 
 from app.models import AuditLog, User
+from app.services import agent_context
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +74,12 @@ def write_audit_row(
     field-level change log; see the AuditLog model for the per-action
     shape convention. NULL for actions that don't carry diff data
     (e.g. redacted_reveal, share_contact)."""
+    # Stamp the acting agent + policy version into every row written
+    # inside an agent scope (app/services/agent_context). Explicit
+    # metadata keys win on collision — the stamp never clobbers.
+    stamp = agent_context.current()
+    if stamp:
+        payload_metadata = {**stamp, **(payload_metadata or {})}
     try:
         db.add(
             AuditLog(

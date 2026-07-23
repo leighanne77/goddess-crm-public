@@ -342,7 +342,9 @@ def test_chat_auto_files_request_when_update_returns_forbidden_owner_only(
     request_change in the next iteration. We script all three turns."""
     owner = user_factory(email="alice@test.fake")
     requester = user_factory(email="bob@test.fake")
-    contact = Contact(name="Marcus", primary_fund="General", owner_id=owner.id)
+    contact = Contact(
+        name="Marcus", primary_fund="General", owner_id=owner.id, is_private=False
+    )
     db.add(contact)
     db.commit()
     db.refresh(contact)

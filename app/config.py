@@ -45,6 +45,12 @@ class Settings(BaseSettings):
     jwt_expiration_days: int = 7
 
     # Access control
+    # Policy engine (app/services/policy.py). False = SHADOW mode: every
+    # tool call logs its ALLOW/DENY/CONFIRM verdict against
+    # app/policies.yaml without changing behavior. Flip to true to block
+    # DENY verdicts. Deny-by-default + fail-closed live in the engine.
+    policy_enforce: bool = False
+
     allowed_emails: str = ""
     allowed_origins: str = "http://localhost:5173"
 
