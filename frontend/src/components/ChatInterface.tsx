@@ -309,7 +309,7 @@ export function ChatInterface() {
       >
         {bubbles.length === 0 && !sending ? (
           <p className="mx-auto mt-12 max-w-prose text-center text-sm italic opacity-60">
-            Welcome to the Global DIN team portal. Right now, our portal is just
+            Welcome to the DIN team portal. Right now, our portal is just
             a place for finding contacts, adding more contacts, and adding notes
             to our contacts. In just a few weeks, we can use this portal for
             much more — from sending emails to searching our knowledge base, to
